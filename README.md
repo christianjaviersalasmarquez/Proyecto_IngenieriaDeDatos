@@ -1,0 +1,2 @@
+# Proyecto_IngenieriaDeDatos
+Proyecto de la materia de Ingeniería de Datos de la carrera de Ingeniería Estadística. Análisis Inferencial, Descriptivo y Multivariante del conjunto de datos del Censo Nacional Económico 2010 del Instituto Nacional de Estadística y Censos INEC del Ecuador, utilizando R, HTML, CSS, JavaScript y el framework de Highcharts para la elaboración del dashboard y las visualizaciones interactivas.
