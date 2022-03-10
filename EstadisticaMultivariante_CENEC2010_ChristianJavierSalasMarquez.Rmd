@@ -1,0 +1,144 @@
+---
+title: "Ingeniería de Datos"
+author: "Christian Javier Salas Marquez"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  number_sections: yes
+  df_print: paged
+  toc: yes
+  toc_depth: 3
+  toc_float: yes
+  pdf_document: default
+---
+
+# Censo Nacional Económico
+
+***
+## Análisis de Correspondencia Múltiple 
+***
+
+```{r}
+datos_CENEC <- read.csv("~/Ingenieria Estadistica II PAO 2021/Ingenieria de Datos/Proyecto_SegundoParcial_IngenieriaDeDatos/DATOS_ABIERTOS_ENCUESTA_CENSO_2010/cenec_2010.csv", sep=";")
+#View(datos_CENEC)
+```
+
+```{r}
+#str(datos_CENEC)
+```
+
+
+Para el análisis de correspondencia múltiple, se trabajará con las variables categóricas: s1p2 (provincias), s2p4_1 (sexo del gerente o propietario), s2p6 (posee calificación artesanal el gerente o propietario), s2p7 (local propio o arrendado), s2p8 (tipo de establecimiento), s2p9 (tiene RUC el establecimiento), s4p6 (actividad de comercio), s4p7c1 (Principal cliente a nivel local), s4p7c2 (Principal cliente a nivel provincial), s4p7c3 (Principal cliente a nivel nacional), s4p7c4 (Principal cliente a nivel exterior), s5p1 (registros contables), s6p2 (forma del establecimiento), s6p3 (Financiamiento para el establecimiento), s6p6 (Establecimiento realizo investigaciones de mercado), s6p10 (Gasto en capacitación y formación), s6p11 (Uso de internet), rgnatu (Regiones Naturales), financ (Fuentes de financiamiento), tra_ing (Estratos de ingresos percibidos por ventas o prestación de servicios), g_anoini (Años de inicio de la actividad principal), m_c_s (sectores).
+
+
+```{r}
+provincia = as.factor(datos_CENEC$s1p2)
+sexo = as.factor(datos_CENEC$s2p4_1)
+calif_art = as.factor(datos_CENEC$s2p6)
+local = as.factor(datos_CENEC$s2p7)
+tipo_establ = as.factor(datos_CENEC$s2p8)
+RUC = as.factor(datos_CENEC$s2p9)
+actividad = as.factor(datos_CENEC$s4p6)
+pc_local = as.factor(datos_CENEC$s4p7c1)
+pc_prov = as.factor(datos_CENEC$s4p7c2)
+pc_nacional = as.factor(datos_CENEC$s4p7c3)
+pc_exterior = as.factor(datos_CENEC$s4p7c4)
+reg_contable = as.factor(datos_CENEC$s5p1)
+forma_establ = as.factor(datos_CENEC$s6p2)
+financiamiento = as.factor(datos_CENEC$s6p3)
+inv_mercado = as.factor(datos_CENEC$s6p6)
+gasto_capacit = as.factor(datos_CENEC$s6p10)
+uso_internet = as.factor(datos_CENEC$s6p11)
+region =  as.factor(datos_CENEC$rgnatu)
+fuentes_financ = as.factor(datos_CENEC$financ)
+estrato_ingr = as.factor(datos_CENEC$tra_ing)
+anio_inicio = as.factor(datos_CENEC$g_anoini)
+sector = as.factor(datos_CENEC$m_c_s)
+
+```
+
+
+```{r}
+#df_factores_CENEC = data.frame(provincia, sexo, calif_art, local, tipo_establ, RUC, actividad, pc_local, pc_prov, pc_nacional, pc_exterior, reg_contable, forma_establ, financiamiento, inv_mercado, gasto_capacit, uso_internet, region, fuentes_financ, estrato_ingr, anio_inicio, sector)
+
+df_factores_CENEC = data.frame( sexo, tipo_establ, actividad, pc_nacional, pc_exterior, reg_contable, forma_establ, inv_mercado, gasto_capacit, uso_internet, region, fuentes_financ, estrato_ingr, sector)
+
+```
+
+```{r}
+#df_factores_CENEC
+```
+
+
+```{r}
+library(ca)
+library(stringr)
+library(FactoMineR)
+library(ade4)
+library(FactoClass)
+library(factoextra)
+library(missMDA)
+```
+
+
+```{r}
+acm_CENEC <- mjca(df_factores_CENEC)
+#acm_CENEC
+```
+
+
+```{r}
+acm_dudi <- dudi.acm(df_factores_CENEC, scannf=FALSE)
+```
+
+```{r}
+summary(acm_dudi)
+```
+
+```{r}
+options(max.print=1000000)
+summary(acm_CENEC)
+```
+
+
+
+```{r}
+#fviz_mca_ind(acm_dudi, repel=TRUE)+labs(title="Nube de Puntos de los Individuos")
+```
+
+
+
+
+```{r}
+fviz_mca_var(acm_dudi,axes=c(1,2), repel=TRUE)+labs(title="Nube de Puntos de Categorías en el Primer Plano")
+```
+
+
+
+```{r}
+library(data.table)
+
+df_ACM_CENEC <- transpose(data.frame(summary(acm_CENEC)$columns[,5], summary(acm_CENEC)$columns[,8])/1000)
+
+df_ACM_CENEC
+
+
+```
+
+
+
+```{r}
+library(writexl)
+
+write_xlsx(df_ACM_CENEC,"C:\\Users\\Computer\\Documents\\Ingenieria Estadistica II PAO 2021\\Ingenieria de Datos\\Proyecto_SegundoParcial_IngenieriaDeDatos\\tabla_ACM_CENEC.xlsx")
+```
+
+
+
+
+
+
+
+
+
